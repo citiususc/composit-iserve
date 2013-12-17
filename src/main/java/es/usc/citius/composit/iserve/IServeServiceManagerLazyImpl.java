@@ -12,7 +12,7 @@
 // * @author Pablo Rodríguez Mier
 // */
 //
-//public class IServeServiceManagerLazyImpl implements OperationManager {
+//public class IServeServiceManagerLazyImpl implements OperationTranslator {
 //    private final ServiceManager delegatedManager;
 //    private Set<ServiceModel> modelServices = null;
 //

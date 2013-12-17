@@ -1,36 +1,32 @@
-package es.usc.citius.composit.iserve;
+package es.usc.citius.composit.iserve.discovery;
 
 
-
-import es.usc.citius.composit.core.composition.DiscoveryIO;
+import es.usc.citius.composit.core.composition.InputDiscoverer;
 import es.usc.citius.composit.core.matcher.graph.MatchGraph;
 import es.usc.citius.composit.core.model.Operation;
-import es.usc.citius.composit.core.model.Signature;
-import es.usc.citius.composit.core.model.impl.ResourceOperation;
-import uk.ac.open.kmi.iserve.api.iServeEngineFactory;
+import es.usc.citius.composit.iserve.OperationTranslator;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
-import uk.ac.open.kmi.iserve.sal.exception.ServiceException;
 import uk.ac.open.kmi.iserve.sal.manager.ServiceManager;
-import uk.ac.open.kmi.msm4j.Service;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class iServeDiscoveryIO implements DiscoveryIO<URI> {
+public class iServeMatchGraphBasedDiscoverer implements InputDiscoverer<URI> {
 
-    private OperationManager mgr;
+    private OperationTranslator mgr;
     private ServiceManager serviceManager;
     private MatchGraph<URI, LogicConceptMatchType> matchGraph;
 
-    public iServeDiscoveryIO(OperationManager mgr, ServiceManager serviceManager, MatchGraph<URI, LogicConceptMatchType> matchGraph) {
+    public iServeMatchGraphBasedDiscoverer(OperationTranslator mgr, ServiceManager serviceManager, MatchGraph<URI, LogicConceptMatchType> matchGraph) {
         this.mgr = mgr;
         this.serviceManager = serviceManager;
         this.matchGraph = matchGraph;
     }
 
     @Override
-    public Set<Operation<URI>> discoverOperationsForInput(URI input) {
+    public Set<Operation<URI>> findOperationsConsuming(URI input) {
         Set<URI> operationUris = new HashSet<URI>();
         for(URI compatibleInput : matchGraph.getTargetElementsMatchedBy(input).keySet()){
             // Get service op with output
@@ -44,7 +40,11 @@ public class iServeDiscoveryIO implements DiscoveryIO<URI> {
     }
 
     @Override
-    public Set<Operation<URI>> discoverOperationsForOutput(URI output) {
-        throw new UnsupportedOperationException();
+    public Set<Operation<URI>> findOperationsConsumingSome(Collection<URI> inputs) {
+        Set<Operation<URI>> operations = new HashSet<Operation<URI>>();
+        for(URI input : inputs){
+            operations.addAll(findOperationsConsuming(input));
+        }
+        return operations;
     }
 }

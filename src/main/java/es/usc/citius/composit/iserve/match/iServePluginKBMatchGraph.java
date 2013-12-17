@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * MatchGraph implementation using a Knowledge base manager to resolve exact/plugin matches.
+ */
 public class iServePluginKBMatchGraph extends AbstractMatchGraph<URI, LogicConceptMatchType> {
     private KnowledgeBaseManager kb;
     private URI ontologyGraph;

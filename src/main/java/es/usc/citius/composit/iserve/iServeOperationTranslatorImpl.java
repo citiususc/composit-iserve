@@ -16,11 +16,11 @@ import uk.ac.open.kmi.msm4j.Service;
 import java.net.URI;
 import java.util.*;
 
-public class iServeOperationManagerImpl implements OperationManager {
+public class iServeOperationTranslatorImpl implements OperationTranslator {
     private ServiceManager serviceManager;
     private Map<URI, Operation<URI>> operations = new HashMap<URI, Operation<URI>>();
 
-    public iServeOperationManagerImpl(ServiceManager serviceManager) {
+    public iServeOperationTranslatorImpl(ServiceManager serviceManager) {
         this.serviceManager = serviceManager;
         for(URI serviceUri : serviceManager.listServices()) {
             System.out.println("Processing " + serviceUri);
