@@ -40,6 +40,17 @@ public class iServeMatchGraph extends AbstractMatchGraph<URI, LogicConceptMatchT
 
     @Override
     public Map<URI, LogicConceptMatchType> getSourceElementsThatMatch(URI target) {
-        throw new UnsupportedOperationException("not implemented");
+        // Get elements that can match the specific target
+        Map<URI, LogicConceptMatchType> match = new HashMap<URI, LogicConceptMatchType>();
+        Map<URI, MatchResult> resultSubsume = matcher.listMatchesOfType(target, LogicConceptMatchType.Subsume);
+        Map<URI, MatchResult> resultExact = matcher.listMatchesOfType(target, LogicConceptMatchType.Exact);
+        // TODO: ConceptMatcher does not define a generic type for the match type.
+        for(Map.Entry<URI, MatchResult> entry : resultSubsume.entrySet()){
+            match.put(entry.getKey(), (LogicConceptMatchType)entry.getValue().getMatchType());
+        }
+        for(Map.Entry<URI, MatchResult> entry : resultExact.entrySet()){
+            match.put(entry.getKey(), (LogicConceptMatchType)entry.getValue().getMatchType());
+        }
+        return match;
     }
 }
