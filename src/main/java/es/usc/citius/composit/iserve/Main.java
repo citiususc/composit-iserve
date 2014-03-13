@@ -13,6 +13,7 @@ import es.usc.citius.composit.iserve.discovery.DummyDiscoverer;
 import es.usc.citius.composit.iserve.discovery.iServeMatchGraphBasedDiscoverer;
 import es.usc.citius.composit.iserve.discovery.iServeOperationDiscovererAdapter;
 import es.usc.citius.composit.iserve.match.iServeMatchGraph;
+import es.usc.citius.composit.iserve.util.Metrics;
 import es.usc.citius.composit.iserve.util.WSCImportUtils;
 import es.usc.citius.composit.wsc08.data.WSCTest;
 import uk.ac.open.kmi.iserve.api.iServeEngine;
@@ -60,7 +61,11 @@ public class Main {
         //final MatchGraph<URI, LogicConceptMatchType> matchGraph = new iServePluginKBMatchGraph(ontoUrl.toURI(), iserve.getRegistryManager().getKnowledgeBaseManager());
         final ServiceManager serviceManager = iserve.getRegistryManager().getServiceManager();
         //final ConceptMatcher matcher = iserve.getDefaultConceptMatcher();
-        final ConceptMatcher matcher = iserve.getConceptMatcher("uk.ac.open.kmi.iserve.discovery.disco.impl.SparqlIndexedLogicConceptMatcher");
+        //final ConceptMatcher matcher = iserve.getConceptMatcher("uk.ac.open.kmi.iserve.discovery.disco.impl.SparqlIndexedLogicConceptMatcher");
+        //final ConceptMatcher matcher = iserve.getConceptMatcher("uk.ac.open.kmi.iserve.discovery.disco.impl.SparqlLogicConceptMatcher");
+        final ConceptMatcher matcher = iserve.getConceptMatcher("uk.ac.open.kmi.iserve.discovery.infinispan.InfinispanIndexedConceptMatcher");
+
+        System.out.println("Matcher description: " + matcher.getMatcherDescription());
 
         final MatchGraph<URI, LogicConceptMatchType> matchGraph = new iServeMatchGraph(matcher,
                 iserve.getRegistryManager().getKnowledgeBaseManager());
@@ -87,24 +92,11 @@ public class Main {
         composit.addOptimization(new BackwardMinimizationOptimizer<URI, LogicConceptMatchType>());
         composit.addOptimization(new FunctionalDominanceOptimizer<URI, LogicConceptMatchType>());
 
-        // WSC01 Request
-        // inputs: ("con1233457844", "con1849951292", "con864995873")
-        // outputs: ("con1220759822", "con2119691623")
-        SignatureIO<URI> request = new SignatureIO<URI>(
-                Arrays.asList(
-                        URI.create(ontoUrl.toString() + "#con1233457844"),
-                        URI.create(ontoUrl.toString() + "#con1849951292"),
-                        URI.create(ontoUrl.toString() + "#con864995873")
-                ),
-
-                Arrays.asList(
-                        URI.create(ontoUrl.toString() + "#con1220759822"),
-                        URI.create(ontoUrl.toString() + "#con2119691623")
-                )
-        );
+        Metrics.get().reset();
 
         composit.search(translate(test.dataset().getRequest(), ontoUrl));
 
+        System.out.println(Metrics.get());
         iserve.shutdown();
     }
 }

@@ -2,6 +2,7 @@ package es.usc.citius.composit.iserve.match;
 
 
 import es.usc.citius.composit.core.matcher.graph.AbstractMatchGraph;
+import es.usc.citius.composit.iserve.util.Metrics;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
 import uk.ac.open.kmi.iserve.sal.manager.KnowledgeBaseManager;
 
@@ -29,6 +30,7 @@ public class iServePluginKBMatchGraph extends AbstractMatchGraph<URI, LogicConce
 
     @Override
     public Map<URI, LogicConceptMatchType> getTargetElementsMatchedBy(URI source) {
+        Metrics.get().increment("iServePluginKBMatchGraph.getTargetElementsMatchedBy");
         Map<URI, LogicConceptMatchType> matchMapping = new HashMap<URI, LogicConceptMatchType>();
         matchMapping.put(source, LogicConceptMatchType.Exact);
         for(URI superclass : kb.listSuperClasses(source, false)){
@@ -39,6 +41,7 @@ public class iServePluginKBMatchGraph extends AbstractMatchGraph<URI, LogicConce
 
     @Override
     public Map<URI, LogicConceptMatchType> getSourceElementsThatMatch(URI target) {
+        Metrics.get().increment("iServePluginKBMatchGraph.getSourceElementsThatMatch");
         Map<URI, LogicConceptMatchType> matchMapping = new HashMap<URI, LogicConceptMatchType>();
         matchMapping.put(target, LogicConceptMatchType.Exact);
         for(URI subclass : kb.listSubClasses(target, false)){

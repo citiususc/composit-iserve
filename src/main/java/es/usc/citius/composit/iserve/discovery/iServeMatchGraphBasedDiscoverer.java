@@ -5,6 +5,7 @@ import es.usc.citius.composit.core.composition.InputDiscoverer;
 import es.usc.citius.composit.core.matcher.graph.MatchGraph;
 import es.usc.citius.composit.core.model.Operation;
 import es.usc.citius.composit.iserve.OperationTranslator;
+import es.usc.citius.composit.iserve.util.Metrics;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
 import uk.ac.open.kmi.iserve.sal.manager.ServiceManager;
 
@@ -27,6 +28,7 @@ public class iServeMatchGraphBasedDiscoverer implements InputDiscoverer<URI> {
 
     @Override
     public Set<Operation<URI>> findOperationsConsuming(URI input) {
+        Metrics.get().increment("iServeMatchGraphBasedDiscoverer.findOperationsConsuming");
         Set<URI> operationUris = new HashSet<URI>();
         for(URI compatibleInput : matchGraph.getTargetElementsMatchedBy(input).keySet()){
             // Get service op with output
@@ -41,6 +43,7 @@ public class iServeMatchGraphBasedDiscoverer implements InputDiscoverer<URI> {
 
     @Override
     public Set<Operation<URI>> findOperationsConsumingSome(Collection<URI> inputs) {
+        Metrics.get().increment("iServeMatchGraphBasedDiscoverer.findOperationsConsumingSome");
         Set<Operation<URI>> operations = new HashSet<Operation<URI>>();
         for(URI input : inputs){
             operations.addAll(findOperationsConsuming(input));

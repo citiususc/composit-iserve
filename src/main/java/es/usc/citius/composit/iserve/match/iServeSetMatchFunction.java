@@ -5,6 +5,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import es.usc.citius.composit.core.matcher.MatchTable;
 import es.usc.citius.composit.core.matcher.SetMatchFunction;
+import es.usc.citius.composit.iserve.util.Metrics;
 import uk.ac.open.kmi.iserve.discovery.api.ConceptMatcher;
 import uk.ac.open.kmi.iserve.discovery.api.MatchResult;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
@@ -22,11 +23,13 @@ public class iServeSetMatchFunction implements SetMatchFunction<URI, LogicConcep
 
     @Override
     public MatchTable<URI, LogicConceptMatchType> partialMatch(Set<URI> source, Set<URI> target) {
+        Metrics.get().increment("iServeSetMatchFunction.partialMatch");
         return fullMatch(source, target);
     }
 
     @Override
     public MatchTable<URI, LogicConceptMatchType> fullMatch(Set<URI> source, Set<URI> target) {
+        Metrics.get().increment("iServeSetMatchFunction.fullMatch");
         Table<URI, URI, MatchResult> result = this.matcher.match(source, target);
         Table<URI, URI, LogicConceptMatchType> transformed = HashBasedTable.create();
         for(Table.Cell<URI, URI, MatchResult> cell : result.cellSet()){
@@ -37,6 +40,7 @@ public class iServeSetMatchFunction implements SetMatchFunction<URI, LogicConcep
 
     @Override
     public LogicConceptMatchType match(URI source, URI target) {
+        Metrics.get().increment("iServeSetMatchFunction.match");
         return (LogicConceptMatchType) matcher.match(source, target).getMatchType();
     }
 }

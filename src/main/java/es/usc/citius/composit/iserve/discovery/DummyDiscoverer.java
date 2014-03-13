@@ -4,6 +4,7 @@ package es.usc.citius.composit.iserve.discovery;
 import es.usc.citius.composit.core.composition.InputDiscoverer;
 import es.usc.citius.composit.core.model.Operation;
 import es.usc.citius.composit.iserve.OperationTranslator;
+import es.usc.citius.composit.iserve.util.Metrics;
 
 import java.net.URI;
 import java.util.Collection;
@@ -18,11 +19,13 @@ public class DummyDiscoverer implements InputDiscoverer<URI> {
 
     @Override
     public Set<Operation<URI>> findOperationsConsuming(URI input) {
+        Metrics.get().increment("DummyDiscoverer.findOperationsConsuming");
         return op.getOperations();
     }
 
     @Override
     public Set<Operation<URI>> findOperationsConsumingSome(Collection<URI> inputs) {
+        Metrics.get().increment("DummyDiscoverer.findOperationsConsumingSome");
         return op.getOperations();
     }
 }

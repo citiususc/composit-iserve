@@ -2,6 +2,7 @@ package es.usc.citius.composit.iserve.match;
 
 
 import es.usc.citius.composit.core.matcher.MatchFunction;
+import es.usc.citius.composit.iserve.util.Metrics;
 import uk.ac.open.kmi.iserve.discovery.api.ConceptMatcher;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
 
@@ -17,6 +18,7 @@ public class iServeMatchFunction implements MatchFunction<URI, LogicConceptMatch
 
     @Override
     public LogicConceptMatchType match(URI source, URI target) {
+        Metrics.get().increment("iServeMatchFunction.match");
         return (LogicConceptMatchType) matcher.match(source, target).getMatchType();
     }
 }
