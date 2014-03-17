@@ -12,6 +12,7 @@ import es.usc.citius.composit.core.model.impl.SignatureIO;
 import es.usc.citius.composit.iserve.discovery.DummyDiscoverer;
 import es.usc.citius.composit.iserve.discovery.iServeMatchGraphBasedDiscoverer;
 import es.usc.citius.composit.iserve.discovery.iServeOperationDiscovererAdapter;
+import es.usc.citius.composit.iserve.match.ConceptMatcherMetrics;
 import es.usc.citius.composit.iserve.match.iServeMatchGraph;
 import es.usc.citius.composit.iserve.util.Metrics;
 import es.usc.citius.composit.iserve.util.WSCImportUtils;
@@ -60,21 +61,23 @@ public class Main {
         // Create a simple KB-Based MatchGraph that meets the WSC match rules (exact/plugin match)
         //final MatchGraph<URI, LogicConceptMatchType> matchGraph = new iServePluginKBMatchGraph(ontoUrl.toURI(), iserve.getRegistryManager().getKnowledgeBaseManager());
         final ServiceManager serviceManager = iserve.getRegistryManager().getServiceManager();
-        //final ConceptMatcher matcher = iserve.getDefaultConceptMatcher();
-        //final ConceptMatcher matcher = iserve.getConceptMatcher("uk.ac.open.kmi.iserve.discovery.disco.impl.SparqlIndexedLogicConceptMatcher");
-        //final ConceptMatcher matcher = iserve.getConceptMatcher("uk.ac.open.kmi.iserve.discovery.disco.impl.SparqlLogicConceptMatcher");
-        final ConceptMatcher matcher = iserve.getConceptMatcher("uk.ac.open.kmi.iserve.discovery.infinispan.InfinispanIndexedConceptMatcher");
 
+        //final ConceptMatcher iserveMatcher = iserve.getDefaultConceptMatcher();
+        final ConceptMatcher iserveMatcher = iserve.getConceptMatcher("uk.ac.open.kmi.iserve.discovery.disco.impl.SparqlIndexedLogicConceptMatcher");
+        //final ConceptMatcher iserveMatcher = iserve.getConceptMatcher("uk.ac.open.kmi.iserve.discovery.disco.impl.SparqlLogicConceptMatcher");
+        //ConceptMatcher iserveMatcher = iserve.getConceptMatcher("uk.ac.open.kmi.iserve.discovery.infinispan.InfinispanIndexedConceptMatcher");
+
+        final ConceptMatcher matcher = new ConceptMatcherMetrics(iserveMatcher);
         System.out.println("Matcher description: " + matcher.getMatcherDescription());
 
         final MatchGraph<URI, LogicConceptMatchType> matchGraph = new iServeMatchGraph(matcher,
                 iserve.getRegistryManager().getKnowledgeBaseManager());
         final OperationTranslator opManager = new iServeIndexedOperationTranslator(serviceManager);
-        //final OperationTranslator opManager = new iServeLazySparqlOperationTranslator(serviceManager);
+        //final OperationTranslator opManager = new iServeLazyOperationTranslator(serviceManager);
 
-        //final InputDiscoverer<URI> discoverer = new iServeMatchGraphBasedDiscoverer(opManager, serviceManager, matchGraph);
+        final InputDiscoverer<URI> discoverer = new iServeMatchGraphBasedDiscoverer(opManager, serviceManager, matchGraph);
         //final InputDiscoverer<URI> discoverer = new iServeOperationDiscovererAdapter(new GenericLogicDiscoverer(serviceManager, matcher), opManager);
-        final InputDiscoverer<URI> discoverer = new DummyDiscoverer(opManager);
+        //final InputDiscoverer<URI> discoverer = new DummyDiscoverer(opManager);
 
         CompositionProblem<URI, LogicConceptMatchType> problem = new CompositionProblem<URI, LogicConceptMatchType>() {
             @Override

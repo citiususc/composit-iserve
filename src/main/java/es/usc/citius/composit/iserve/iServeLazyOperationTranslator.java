@@ -10,11 +10,11 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
-public class iServeLazySparqlOperationTranslator implements OperationTranslator {
+public class iServeLazyOperationTranslator implements OperationTranslator {
 
     private ServiceManager serviceMgr;
 
-    public iServeLazySparqlOperationTranslator(ServiceManager serviceMgr) {
+    public iServeLazyOperationTranslator(ServiceManager serviceMgr) {
         this.serviceMgr = serviceMgr;
     }
 
