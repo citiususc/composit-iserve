@@ -13,6 +13,7 @@ import es.usc.citius.composit.core.knowledge.Concept;
 import es.usc.citius.composit.core.matcher.graph.MatchGraph;
 import es.usc.citius.composit.core.model.impl.SignatureIO;
 import es.usc.citius.composit.iserve.discovery.DummyDiscoverer;
+import es.usc.citius.composit.iserve.discovery.WSCInputDiscoveryUriAdapter;
 import es.usc.citius.composit.iserve.discovery.iServeMatchGraphBasedDiscoverer;
 import es.usc.citius.composit.iserve.discovery.iServeOperationDiscovererAdapter;
 import es.usc.citius.composit.iserve.match.ConceptMatcherMetrics;
@@ -56,12 +57,14 @@ public class Cli {
     private List<String> requestOutputs = new ArrayList<String>();
     @Parameter(names = {"-wsc", "--wsc-dataset"}, description = "WSC'08 dataset to be used")
     private WSCTest test = WSCTest.TESTSET_2008_01;
+    @Parameter(names={"-t", "--run-times"}, description = "Run the composition many times (for benchmark purposes)")
+    private int runtimes = 1;
 
     private static final int port = 15000;
     private JCommander jcommander;
 
     public enum DiscoveryEngine {
-        DUMMY, CONCEPT_LEVEL, GENERIC
+        DUMMY, WSC_ADHOC, CONCEPT_LEVEL, CONCEPT_LEVEL_WITH_CACHE, GENERIC
     }
 
     public static void main(String[] args) throws Exception {
@@ -169,8 +172,15 @@ public class Cli {
             case DUMMY:
                 discoverer = new DummyDiscoverer(opManager);
                 break;
+            case WSC_ADHOC:
+                WSCTest.Dataset dataset = test.dataset();
+                discoverer = new WSCInputDiscoveryUriAdapter(dataset.getDefaultCompositionProblem().getInputDiscoverer(), dataset.getKb(), ontoUrl.toString());
+                break;
             case CONCEPT_LEVEL:
                 discoverer = new iServeMatchGraphBasedDiscoverer(opManager, serviceManager, matchGraph);
+                break;
+            case CONCEPT_LEVEL_WITH_CACHE:
+                discoverer = new iServeMatchGraphBasedDiscoverer(opManager, serviceManager, matchGraph, iserve.getRegistryManager().getKnowledgeBaseManager());
                 break;
             case GENERIC:
                 discoverer = new iServeOperationDiscovererAdapter(new GenericLogicDiscoverer(serviceManager, matcher), opManager);
@@ -195,10 +205,14 @@ public class Cli {
         composit.addOptimization(new BackwardMinimizationOptimizer<URI, LogicConceptMatchType>());
         composit.addOptimization(new FunctionalDominanceOptimizer<URI, LogicConceptMatchType>());
 
-        Metrics.get().reset();
-        composit.search(request);
-        log.info("Metrics:");
-        log.info(Metrics.get().toString());
+        for(int i=0; i < runtimes; i++){
+            log.info("Running composition " + (i+1) + "/" + runtimes);
+            Metrics.get().reset();
+            composit.search(request);
+            log.info("Metrics:\n " + Metrics.get().toString());
+            log.info(Metrics.get().toString());
+        }
+
         iserve.shutdown();
     }
 
