@@ -64,7 +64,7 @@ public class Cli {
     private JCommander jcommander;
 
     public enum DiscoveryEngine {
-        DUMMY, WSC_ADHOC, CONCEPT_LEVEL, CONCEPT_LEVEL_WITH_CACHE, GENERIC
+        DUMMY, WSC_ADHOC, CONCEPT_LEVEL, INDEXED_CONCEPT_LEVEL, ISERVE_GENERIC
     }
 
     public static void main(String[] args) throws Exception {
@@ -179,10 +179,10 @@ public class Cli {
             case CONCEPT_LEVEL:
                 discoverer = new iServeMatchGraphBasedDiscoverer(opManager, serviceManager, matchGraph);
                 break;
-            case CONCEPT_LEVEL_WITH_CACHE:
+            case INDEXED_CONCEPT_LEVEL:
                 discoverer = new iServeMatchGraphBasedDiscoverer(opManager, serviceManager, matchGraph, iserve.getRegistryManager().getKnowledgeBaseManager());
                 break;
-            case GENERIC:
+            case ISERVE_GENERIC:
                 discoverer = new iServeOperationDiscovererAdapter(new GenericLogicDiscoverer(serviceManager, matcher), opManager);
                 break;
             default:
@@ -200,6 +200,8 @@ public class Cli {
                 return discoverer;
             }
         };
+
+        Metrics.get().reset();
 
         ComposIT<URI, LogicConceptMatchType> composit = new ComposIT<URI, LogicConceptMatchType>(problem);
         composit.addOptimization(new BackwardMinimizationOptimizer<URI, LogicConceptMatchType>());
