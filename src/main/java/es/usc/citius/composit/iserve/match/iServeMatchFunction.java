@@ -2,9 +2,9 @@ package es.usc.citius.composit.iserve.match;
 
 
 import es.usc.citius.composit.core.matcher.MatchFunction;
-import es.usc.citius.composit.iserve.util.Metrics;
 import uk.ac.open.kmi.iserve.discovery.api.ConceptMatcher;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
+import uk.ac.open.kmi.iserve.sal.util.metrics.Metrics;
 
 import java.net.URI;
 

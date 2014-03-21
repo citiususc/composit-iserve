@@ -4,17 +4,16 @@ package es.usc.citius.composit.iserve.discovery;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.hp.hpl.jena.sparql.function.library.max;
 import es.usc.citius.composit.core.composition.InputDiscoverer;
 import es.usc.citius.composit.core.matcher.graph.MatchGraph;
 import es.usc.citius.composit.core.model.Operation;
 import es.usc.citius.composit.iserve.OperationTranslator;
-import es.usc.citius.composit.iserve.util.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
 import uk.ac.open.kmi.iserve.sal.manager.KnowledgeBaseManager;
 import uk.ac.open.kmi.iserve.sal.manager.ServiceManager;
+import uk.ac.open.kmi.iserve.sal.util.metrics.Metrics;
 
 import java.net.URI;
 import java.util.Collection;

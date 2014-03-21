@@ -4,7 +4,7 @@ package es.usc.citius.composit.iserve.discovery;
 import es.usc.citius.composit.core.composition.InputDiscoverer;
 import es.usc.citius.composit.core.model.Operation;
 import es.usc.citius.composit.iserve.OperationTranslator;
-import es.usc.citius.composit.iserve.util.Metrics;
+import uk.ac.open.kmi.iserve.sal.util.metrics.Metrics;
 
 import java.net.URI;
 import java.util.Collection;

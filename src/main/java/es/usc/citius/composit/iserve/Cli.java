@@ -18,7 +18,6 @@ import es.usc.citius.composit.iserve.discovery.iServeMatchGraphBasedDiscoverer;
 import es.usc.citius.composit.iserve.discovery.iServeOperationDiscovererAdapter;
 import es.usc.citius.composit.iserve.match.ConceptMatcherMetrics;
 import es.usc.citius.composit.iserve.match.iServeMatchGraph;
-import es.usc.citius.composit.iserve.util.Metrics;
 import es.usc.citius.composit.iserve.util.WSCImportUtils;
 import es.usc.citius.composit.wsc08.data.WSCTest;
 import org.slf4j.LoggerFactory;
@@ -28,6 +27,7 @@ import uk.ac.open.kmi.iserve.discovery.api.ConceptMatcher;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
 import uk.ac.open.kmi.iserve.discovery.disco.impl.GenericLogicDiscoverer;
 import uk.ac.open.kmi.iserve.sal.manager.ServiceManager;
+import uk.ac.open.kmi.iserve.sal.util.metrics.Metrics;
 
 import java.net.URI;
 import java.net.URL;
@@ -210,7 +210,6 @@ public class Cli {
             Metrics.get().reset();
             composit.search(request);
             log.info("Metrics:\n " + Metrics.get().toString());
-            log.info(Metrics.get().toString());
         }
 
         iserve.shutdown();

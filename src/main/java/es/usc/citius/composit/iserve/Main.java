@@ -9,24 +9,20 @@ import es.usc.citius.composit.core.composition.search.CompositionProblem;
 import es.usc.citius.composit.core.knowledge.Concept;
 import es.usc.citius.composit.core.matcher.graph.MatchGraph;
 import es.usc.citius.composit.core.model.impl.SignatureIO;
-import es.usc.citius.composit.iserve.discovery.DummyDiscoverer;
 import es.usc.citius.composit.iserve.discovery.iServeMatchGraphBasedDiscoverer;
-import es.usc.citius.composit.iserve.discovery.iServeOperationDiscovererAdapter;
 import es.usc.citius.composit.iserve.match.ConceptMatcherMetrics;
 import es.usc.citius.composit.iserve.match.iServeMatchGraph;
-import es.usc.citius.composit.iserve.util.Metrics;
 import es.usc.citius.composit.iserve.util.WSCImportUtils;
 import es.usc.citius.composit.wsc08.data.WSCTest;
 import uk.ac.open.kmi.iserve.api.iServeEngine;
 import uk.ac.open.kmi.iserve.api.iServeEngineFactory;
 import uk.ac.open.kmi.iserve.discovery.api.ConceptMatcher;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
-import uk.ac.open.kmi.iserve.discovery.disco.impl.GenericLogicDiscoverer;
 import uk.ac.open.kmi.iserve.sal.manager.ServiceManager;
+import uk.ac.open.kmi.iserve.sal.util.metrics.Metrics;
 
 import java.net.URI;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 

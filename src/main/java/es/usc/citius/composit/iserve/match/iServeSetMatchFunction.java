@@ -5,10 +5,10 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import es.usc.citius.composit.core.matcher.MatchTable;
 import es.usc.citius.composit.core.matcher.SetMatchFunction;
-import es.usc.citius.composit.iserve.util.Metrics;
 import uk.ac.open.kmi.iserve.discovery.api.ConceptMatcher;
 import uk.ac.open.kmi.iserve.discovery.api.MatchResult;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
+import uk.ac.open.kmi.iserve.sal.util.metrics.Metrics;
 
 import java.net.URI;
 import java.util.Set;
