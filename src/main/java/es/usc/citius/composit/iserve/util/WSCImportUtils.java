@@ -25,10 +25,8 @@ public class WSCImportUtils {
         int services = engine.getRegistryManager().getServiceManager().listServices().size();
         int concepts = engine.getRegistryManager().getKnowledgeBaseManager().listConcepts(ontologyUrl.toURI()).size();
         // TODO: Add #services and #concepts to WSCTest
-        if (force || services != test.getServices() || concepts != test.getConcepts()){
+        if (force || services != test.getServices() || concepts != test.getConcepts()) {
             // Clear registry
-            engine.getRegistryManager().getServiceManager().clearServices();
-            engine.getRegistryManager().getDocumentManager().clearDocuments();
             engine.getRegistryManager().clearRegistry();
             WSCImportUtils.importServices(
                     test.openServicesStream(),
