@@ -31,10 +31,7 @@ import uk.ac.open.kmi.iserve.sal.util.metrics.Metrics;
 
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Cli {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(Cli.class);
@@ -45,10 +42,8 @@ public class Cli {
     private DiscoveryEngine discoveryEngine = DiscoveryEngine.DUMMY;
     @Parameter(names = {"-d", "--index-documents"}, description = "Use an indexed concept matcher")
     private boolean indexDocuments = false;
-    @Parameter(names = {"-o", "--opt-fwd-search"}, description = "Use an optimized version of the forward search")
-    private boolean useOptimizedForwardSearch = false;
-    @Parameter(names = {"-l", "--log-level"}, description = "Set log level")
-    private Level logLevel = Level.INFO;
+    @Parameter(names={"-c", "--match-cache-size"}, description = "Size of the internal cache for matchmaking. 0 = disabled")
+    private int matchCacheSize = 0;
     @Parameter(names = "--help", help = true, description = "Print general command usage options")
     private boolean showHelp = false;
     @Parameter(names = {"-in", "--inputs"}, variableArity = true, description = "List of request inputs (separated by spaces)")
@@ -64,7 +59,7 @@ public class Cli {
     private JCommander jcommander;
 
     public enum DiscoveryEngine {
-        DUMMY, WSC_ADHOC, CONCEPT_LEVEL, INDEXED_CONCEPT_LEVEL, ISERVE_GENERIC
+        DUMMY, WSC_ADHOC, CONCEPT_LEVEL, CACHED_CONCEPT_LEVEL, INDEXED_CONCEPT_LEVEL, ISERVE_GENERIC
     }
 
     public static void main(String[] args) throws Exception {
@@ -78,6 +73,7 @@ public class Cli {
     }
 
     private void parse(String[] args) throws Exception {
+        log.info(Arrays.toString(args));
         // Parse options
         try {
             //if (args.length == 0) throw new Exception("No arguments specified");
@@ -92,8 +88,8 @@ public class Cli {
             System.exit(0);
         }
         // Set log level (direct access to logback)
-        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
-        root.setLevel(logLevel);
+        //ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        //root.setLevel(logLevel);
 
         // Generate the default ontology url pointing to the model reference of the WSC services
         URL ontoUrl = new URL("http://localhost:" + port + "/wsc/ontology/ontology.owl");
@@ -136,6 +132,7 @@ public class Cli {
         // Create a iServe engine
         // Import the dataset to iServe
         final iServeEngine iserve = iServeEngineFactory.createEngine();
+
         // Import data
         WSCImportUtils.importDataset(iserve, ontoUrl, test, false);
 
@@ -156,7 +153,7 @@ public class Cli {
         System.out.println("Matcher description: " + matcher.getMatcherDescription());
 
         final MatchGraph<URI, LogicConceptMatchType> matchGraph = new iServeMatchGraph(matcher,
-                iserve.getRegistryManager().getKnowledgeBaseManager());
+                iserve.getRegistryManager().getKnowledgeBaseManager(), matchCacheSize);
 
         OperationTranslator opManager;
 
@@ -179,8 +176,11 @@ public class Cli {
             case CONCEPT_LEVEL:
                 discoverer = new iServeMatchGraphBasedDiscoverer(opManager, serviceManager, matchGraph);
                 break;
+            case CACHED_CONCEPT_LEVEL:
+                discoverer = new iServeMatchGraphBasedDiscoverer(opManager, serviceManager, matchGraph, true);
+                break;
             case INDEXED_CONCEPT_LEVEL:
-                discoverer = new iServeMatchGraphBasedDiscoverer(opManager, serviceManager, matchGraph, iserve.getRegistryManager().getKnowledgeBaseManager());
+                discoverer = new iServeMatchGraphBasedDiscoverer(opManager, serviceManager, matchGraph, true).index(iserve.getRegistryManager().getKnowledgeBaseManager());
                 break;
             case ISERVE_GENERIC:
                 discoverer = new iServeOperationDiscovererAdapter(new GenericLogicDiscoverer(serviceManager, matcher), opManager);

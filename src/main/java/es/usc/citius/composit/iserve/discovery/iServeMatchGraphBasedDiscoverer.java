@@ -31,16 +31,16 @@ public class iServeMatchGraphBasedDiscoverer implements InputDiscoverer<URI> {
 
 
     public iServeMatchGraphBasedDiscoverer(OperationTranslator mgr, ServiceManager serviceManager, MatchGraph<URI, LogicConceptMatchType> matchGraph) {
-        this(mgr, serviceManager, matchGraph, null);
+        this(mgr, serviceManager, matchGraph, false);
     }
 
-    public iServeMatchGraphBasedDiscoverer(final OperationTranslator mgr, final ServiceManager serviceManager, final MatchGraph<URI, LogicConceptMatchType> matchGraph, KnowledgeBaseManager kb) {
+    public iServeMatchGraphBasedDiscoverer(final OperationTranslator mgr, final ServiceManager serviceManager, final MatchGraph<URI, LogicConceptMatchType> matchGraph, boolean useCache) {
         this.mgr = mgr;
         this.serviceManager = serviceManager;
         this.matchGraph = matchGraph;
 
         this.cache = CacheBuilder.newBuilder()
-                .maximumSize(kb != null ? MAX_CACHE_SIZE : 0)
+                .maximumSize(useCache ? MAX_CACHE_SIZE : 0)
                 .build(new CacheLoader<URI, Set<Operation<URI>>>() {
                     @Override
                     public Set<Operation<URI>> load(URI key) {
@@ -57,6 +57,9 @@ public class iServeMatchGraphBasedDiscoverer implements InputDiscoverer<URI> {
                     }
                 });
 
+    }
+
+    public iServeMatchGraphBasedDiscoverer index(KnowledgeBaseManager kb){
         if (kb != null){
             log.info("Populating discovery index...");
             Set<URI> concepts = kb.listConcepts(null);
@@ -69,6 +72,7 @@ public class iServeMatchGraphBasedDiscoverer implements InputDiscoverer<URI> {
                 counter++;
             }
         }
+        return this;
     }
 
     @Override
