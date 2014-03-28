@@ -83,13 +83,10 @@ public class Cli {
             log.info("To see the commands and options available, use --help");
             System.exit(-1);
         }
-        if (showHelp){
+        if (showHelp) {
             jcommander.usage();
             System.exit(0);
         }
-        // Set log level (direct access to logback)
-        //ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
-        //root.setLevel(logLevel);
 
         // Generate the default ontology url pointing to the model reference of the WSC services
         URL ontoUrl = new URL("http://localhost:" + port + "/wsc/ontology/ontology.owl");
@@ -138,7 +135,7 @@ public class Cli {
 
         log.info("iServe available concept matchers: {}", iserve.listAvailableMatchers());
 
-        ConceptMatcher iserveMatcher = null;
+        ConceptMatcher iserveMatcher;
 
         if (indexMatcher){
             iserveMatcher = iserve.getConceptMatcher("uk.ac.open.kmi.iserve.discovery.disco.impl.SparqlIndexedLogicConceptMatcher");
@@ -147,10 +144,12 @@ public class Cli {
         }
         // Create a simple KB-Based MatchGraph that meets the WSC match rules (exact/plugin match)
         //final MatchGraph<URI, LogicConceptMatchType> matchGraph = new iServePluginKBMatchGraph(ontoUrl.toURI(), iserve.getRegistryManager().getKnowledgeBaseManager());
+
+        // Use the default iServe service manager
         final ServiceManager serviceManager = iserve.getRegistryManager().getServiceManager();
 
         final ConceptMatcher matcher = new ConceptMatcherMetrics(iserveMatcher);
-        System.out.println("Matcher description: " + matcher.getMatcherDescription());
+        log.info("Selected matcher description: " + matcher.getMatcherDescription());
 
         final MatchGraph<URI, LogicConceptMatchType> matchGraph = new iServeMatchGraph(matcher,
                 iserve.getRegistryManager().getKnowledgeBaseManager(), matchCacheSize);
