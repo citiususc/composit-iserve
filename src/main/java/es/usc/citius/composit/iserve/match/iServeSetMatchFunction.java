@@ -10,6 +10,7 @@ import uk.ac.open.kmi.iserve.discovery.api.MatchResult;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
 import uk.ac.open.kmi.iserve.sal.util.metrics.Metrics;
 
+import javax.inject.Inject;
 import java.net.URI;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ public class iServeSetMatchFunction implements SetMatchFunction<URI, LogicConcep
 
     private ConceptMatcher matcher;
 
+    @Inject
     public iServeSetMatchFunction(ConceptMatcher matcher) {
         this.matcher = matcher;
     }

@@ -36,6 +36,8 @@ public class WSCImportUtils {
         }
     }
 
+
+
     public static Map<URI, Service> importServices(InputStream servicesStream, URL ontoUrl, final WSCXMLKnowledgeBase kb, ServiceManager mgr) throws Exception {
         // Export kb to OWL
         String ontoOwl = OWLTransformer.convertKbToOwl(kb, ontoUrl.toString());

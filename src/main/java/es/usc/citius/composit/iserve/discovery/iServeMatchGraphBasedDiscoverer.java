@@ -15,6 +15,7 @@ import uk.ac.open.kmi.iserve.sal.manager.KnowledgeBaseManager;
 import uk.ac.open.kmi.iserve.sal.manager.ServiceManager;
 import uk.ac.open.kmi.iserve.sal.util.metrics.Metrics;
 
+import javax.inject.Inject;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,7 +30,7 @@ public class iServeMatchGraphBasedDiscoverer implements InputDiscoverer<URI> {
     private LoadingCache<URI, Set<Operation<URI>>> cache;
     private static final Logger log = LoggerFactory.getLogger(iServeMatchGraphBasedDiscoverer.class);
 
-
+    @Inject
     public iServeMatchGraphBasedDiscoverer(OperationTranslator mgr, ServiceManager serviceManager, MatchGraph<URI, LogicConceptMatchType> matchGraph) {
         this(mgr, serviceManager, matchGraph, false);
     }

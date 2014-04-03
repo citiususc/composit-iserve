@@ -8,6 +8,7 @@ import uk.ac.open.kmi.iserve.discovery.api.MatchResult;
 import uk.ac.open.kmi.iserve.discovery.api.OperationDiscoverer;
 import uk.ac.open.kmi.iserve.sal.util.metrics.Metrics;
 
+import javax.inject.Inject;
 import java.net.URI;
 import java.util.*;
 
@@ -15,6 +16,7 @@ public class iServeOperationDiscovererAdapter implements InputDiscoverer<URI> {
     private OperationDiscoverer discoverer;
     private OperationTranslator opManager;
 
+    @Inject
     public iServeOperationDiscovererAdapter(OperationDiscoverer discoverer, OperationTranslator opManager) {
         this.discoverer = discoverer;
         this.opManager = opManager;

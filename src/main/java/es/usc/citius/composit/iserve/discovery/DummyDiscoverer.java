@@ -6,6 +6,7 @@ import es.usc.citius.composit.core.model.Operation;
 import es.usc.citius.composit.iserve.OperationTranslator;
 import uk.ac.open.kmi.iserve.sal.util.metrics.Metrics;
 
+import javax.inject.Inject;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Set;
@@ -13,6 +14,7 @@ import java.util.Set;
 public class DummyDiscoverer implements InputDiscoverer<URI> {
     private OperationTranslator op;
 
+    @Inject
     public DummyDiscoverer(OperationTranslator op) {
         this.op = op;
     }

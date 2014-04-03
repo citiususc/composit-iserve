@@ -6,6 +6,7 @@ import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
 import uk.ac.open.kmi.iserve.sal.manager.KnowledgeBaseManager;
 import uk.ac.open.kmi.iserve.sal.util.metrics.Metrics;
 
+import javax.inject.Inject;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,7 @@ public class iServePluginKBMatchGraph extends AbstractMatchGraph<URI, LogicConce
     private KnowledgeBaseManager kb;
     private URI ontologyGraph;
 
+    @Inject
     public iServePluginKBMatchGraph(URI ontologyGraph, KnowledgeBaseManager kb) {
         this.ontologyGraph = ontologyGraph;
         this.kb = kb;

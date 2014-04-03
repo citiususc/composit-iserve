@@ -10,6 +10,7 @@ import es.usc.citius.composit.core.model.impl.ResourceOperation;
 import es.usc.citius.composit.core.model.impl.SignatureIO;
 import es.usc.citius.composit.wsc08.data.knowledge.WSCXMLKnowledgeBase;
 
+import javax.inject.Inject;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ public class WSCInputDiscoveryUriAdapter implements InputDiscoverer<URI> {
     private WSCXMLKnowledgeBase kb;
     private final String baseUri;
 
+    @Inject
     public WSCInputDiscoveryUriAdapter(InputDiscoverer<Concept> discoverer, WSCXMLKnowledgeBase kb, String baseUri) {
         this.discoverer = discoverer;
         this.kb = kb;

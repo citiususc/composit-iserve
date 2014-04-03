@@ -71,10 +71,64 @@
             <artifactId>commons-collections</artifactId>
             <version>3.2.1</version>
         </dependency>
+
+        <!--Add Guice for dependency injection -->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-multibindings</artifactId>
+            <version>3.0</version>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.jukito</groupId>
+            <artifactId>jukito</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Include Test Resources -->
+        <dependency>
+            <groupId>uk.ac.open.kmi</groupId>
+            <artifactId>sws-test-collections</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!--Obtain shared resources-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <!--Test resources-->
+                    <execution>
+                        <id>load-test-resources</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>
+                                    uk.ac.open.kmi:sws-test-collections:1.0
+                                </resourceBundle>
+                            </resourceBundles>
+                            <attached>false</attached>
+                            <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>

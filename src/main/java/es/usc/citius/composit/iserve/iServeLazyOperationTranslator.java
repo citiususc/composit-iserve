@@ -6,6 +6,7 @@ import es.usc.citius.composit.core.model.Signature;
 import es.usc.citius.composit.core.model.impl.ResourceOperation;
 import uk.ac.open.kmi.iserve.sal.manager.ServiceManager;
 
+import javax.inject.Inject;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +15,7 @@ public class iServeLazyOperationTranslator implements OperationTranslator {
 
     private ServiceManager serviceMgr;
 
+    @Inject
     public iServeLazyOperationTranslator(ServiceManager serviceMgr) {
         this.serviceMgr = serviceMgr;
     }

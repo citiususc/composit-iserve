@@ -11,6 +11,7 @@ import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
 import uk.ac.open.kmi.iserve.sal.manager.KnowledgeBaseManager;
 import uk.ac.open.kmi.iserve.sal.util.metrics.Metrics;
 
+import javax.inject.Inject;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +24,7 @@ public class iServeMatchGraph extends AbstractMatchGraph<URI, LogicConceptMatchT
     private LoadingCache<URI, Map<URI, LogicConceptMatchType>> cacheSource;
     private LoadingCache<URI, Map<URI, LogicConceptMatchType>> cacheTarget;
 
+    @Inject
     public iServeMatchGraph(ConceptMatcher matcher, KnowledgeBaseManager kb) {
         this(matcher, kb, 0);
     }
