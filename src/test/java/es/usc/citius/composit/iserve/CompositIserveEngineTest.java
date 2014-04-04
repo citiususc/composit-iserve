@@ -46,15 +46,10 @@ import java.util.Map;
 public class CompositIserveEngineTest {
 
     private static final Logger log = LoggerFactory.getLogger(CompositIserveEngineTest.class);
-    private static final String WSC08_01 = "/WSC08/wsc08_datasets/01/";
-    private static final String WSC08_01_SERVICES = WSC08_01 + "services.xml";
-    private static final String WSC08_01_TAXONOMY_FILE = WSC08_01 + "taxonomy.owl";
     private static final String WSC_01_ONTOLOGY_URL = "http://localhost:15000/wsc/ontology/ontology.owl";
     private static final String WSC_01_ONTOLOGY_NS = WSC_01_ONTOLOGY_URL + "#";
 
     private static WSCTest test = WSCTest.TESTSET_2008_01;
-
-    private static final String MEDIATYPE = "text/xml";
 
     /**
      * JukitoModule.
@@ -109,6 +104,9 @@ public class CompositIserveEngineTest {
     public static void oneOfSetup() throws Exception {
         Injector injector = Guice.createInjector(new iServeEngineModule());
         iServeEngine iserve = injector.getInstance(iServeEngine.class);
+
+        // Clear registry
+        iserve.getRegistryManager().clearRegistry();
 
         // Import data
         WSCImportUtils.importDataset(iserve, new URL(WSC_01_ONTOLOGY_URL), test, false);
