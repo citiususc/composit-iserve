@@ -21,6 +21,7 @@ public class WSCInputDiscoveryUriAdapter implements InputDiscoverer<URI> {
     private WSCXMLKnowledgeBase kb;
     private final String baseUri;
 
+    // TODO: This should be Assisted
     @Inject
     public WSCInputDiscoveryUriAdapter(InputDiscoverer<Concept> discoverer, WSCXMLKnowledgeBase kb, String baseUri) {
         this.discoverer = discoverer;

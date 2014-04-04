@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import es.usc.citius.composit.core.matcher.graph.AbstractMatchGraph;
+import es.usc.citius.composit.core.matcher.graph.MatchGraph;
 import uk.ac.open.kmi.iserve.discovery.api.ConceptMatcher;
 import uk.ac.open.kmi.iserve.discovery.api.MatchResult;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
@@ -17,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class iServeMatchGraph extends AbstractMatchGraph<URI, LogicConceptMatchType> {
+public class iServeMatchGraph extends AbstractMatchGraph<URI, LogicConceptMatchType> implements MatchGraph<URI, LogicConceptMatchType> {
 
     private ConceptMatcher matcher;
     private KnowledgeBaseManager kb;

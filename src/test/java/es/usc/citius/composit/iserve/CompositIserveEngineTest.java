@@ -16,10 +16,12 @@ import es.usc.citius.composit.core.composition.optimization.BackwardMinimization
 import es.usc.citius.composit.core.composition.optimization.FunctionalDominanceOptimizer;
 import es.usc.citius.composit.core.composition.optimization.NetworkOptimizer;
 import es.usc.citius.composit.core.matcher.SetMatchFunction;
-import es.usc.citius.composit.core.matcher.graph.AbstractMatchGraph;
+import es.usc.citius.composit.core.matcher.graph.MatchGraph;
 import es.usc.citius.composit.iserve.discovery.iServeOperationDiscovererAdapter;
 import es.usc.citius.composit.iserve.match.iServeMatchGraph;
 import es.usc.citius.composit.iserve.match.iServeSetMatchFunction;
+import es.usc.citius.composit.iserve.util.WSCImportUtils;
+import es.usc.citius.composit.wsc08.data.WSCTest;
 import junit.framework.Assert;
 import org.jukito.JukitoModule;
 import org.jukito.JukitoRunner;
@@ -28,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.open.kmi.iserve.api.iServeEngine;
 import uk.ac.open.kmi.iserve.api.iServeEngineModule;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
 import uk.ac.open.kmi.iserve.sal.exception.SalException;
@@ -38,7 +41,6 @@ import uk.ac.open.kmi.msm4j.io.impl.ServiceTransformationEngine;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -59,8 +61,10 @@ public class CompositIserveEngineTest {
     private static final String WSC08_01 = "/WSC08/wsc08_datasets/01/";
     private static final String WSC08_01_SERVICES = WSC08_01 + "services.xml";
     private static final String WSC08_01_TAXONOMY_FILE = WSC08_01 + "taxonomy.owl";
-    private static final String WSC_01_TAXONOMY_URL = "http://localhost/wsc/01/taxonomy.owl";
-    private static final String WSC_01_ONTOLOGY_NS = "http://localhost:15000/wsc/ontology/ontology.owl#";
+    private static final String WSC_01_ONTOLOGY_URL = "http://localhost:15000/wsc/ontology/ontology.owl";
+    private static final String WSC_01_ONTOLOGY_NS = WSC_01_ONTOLOGY_URL + "#";
+
+    private static WSCTest test = WSCTest.TESTSET_2008_01;
 
     private static final String MEDIATYPE = "text/xml";
 
@@ -75,26 +79,28 @@ public class CompositIserveEngineTest {
             // Configure iServeEngine
             install(new iServeEngineModule());
 
+
             // bind the Operation Translator
             // bindMany(ServiceManager.class, ServiceManagerSparql.class, ServiceManagerIndexRdf.class);
-            bind(OperationTranslator.class).to(iServeIndexedOperationTranslator.class);
+//            bind(OperationTranslator.class).to(iServeIndexedOperationTranslator.class);
+            bind(OperationTranslator.class).to(iServeLazyOperationTranslator.class);
 
             // bind the Input Discoverer
             // bindMany(ServiceManager.class, ServiceManagerSparql.class, ServiceManagerIndexRdf.class);
-            bind(new TypeLiteral<InputDiscoverer<? extends URI>>(){}).to(iServeOperationDiscovererAdapter.class);
+            bind(new TypeLiteral<InputDiscoverer<URI>>(){}).to(iServeOperationDiscovererAdapter.class);
 
             // bind setMatchFunction
-            bind(new TypeLiteral<SetMatchFunction<? extends URI, ? extends LogicConceptMatchType>>(){}).to(iServeSetMatchFunction.class);
+            bind(new TypeLiteral<SetMatchFunction<URI, LogicConceptMatchType>>(){}).to(iServeSetMatchFunction.class);
 
-            // bind AbstractMatchGraph
-            bind(new TypeLiteral<AbstractMatchGraph<? extends URI, ? extends LogicConceptMatchType>>(){}).to(iServeMatchGraph.class);
+            // bind MatchGraph
+            bind(new TypeLiteral<MatchGraph<URI, LogicConceptMatchType>>(){}).to(iServeMatchGraph.class);
 
             // Bind optimisers
-            MapBinder<String, NetworkOptimizer<? extends URI, ? extends LogicConceptMatchType>> mapbinder =
+            MapBinder<String, NetworkOptimizer<URI, LogicConceptMatchType>> mapbinder =
                     MapBinder.newMapBinder(
                             binder(),
                             new TypeLiteral<String>(){},
-                            new TypeLiteral<NetworkOptimizer<? extends URI, ? extends LogicConceptMatchType>>() {});
+                            new TypeLiteral<NetworkOptimizer<URI, LogicConceptMatchType>>() {});
 
             // For now hard-code the optimisations bindings. Should have a plugin method later.
             mapbinder.addBinding(BackwardMinimizationOptimizer.class.getName()).
@@ -112,7 +118,7 @@ public class CompositIserveEngineTest {
     }
 
     @BeforeClass
-    public static void oneOfSetup() throws IOException, URISyntaxException, SalException, TransformationException {
+    public static void oneOfSetup() throws Exception {
         Injector injector = Guice.createInjector(new iServeEngineModule());
         RegistryManager registryManager = injector.getInstance(RegistryManager.class);
         ServiceTransformationEngine transformationEngine = injector.getInstance(ServiceTransformationEngine
@@ -120,8 +126,13 @@ public class CompositIserveEngineTest {
 
         registryManager.clearRegistry();
 
-        uploadWscTaxonomy(registryManager);
-        importWscServices(transformationEngine, registryManager);
+//        uploadWscTaxonomy(registryManager);
+//        importWscServices(transformationEngine, registryManager);
+
+        iServeEngine iserve = injector.getInstance(iServeEngine.class);
+
+        // Import data
+        WSCImportUtils.importDataset(iserve, new URL(WSC_01_ONTOLOGY_URL), test, false);
     }
 
     private static void uploadWscTaxonomy(RegistryManager registryManager) throws URISyntaxException {
@@ -132,7 +143,7 @@ public class CompositIserveEngineTest {
         model.read(taxonomyFile);
 
         // Upload the model first (it won't be automatically fetched as the URIs won't resolve so we do it manually)
-        registryManager.getKnowledgeBaseManager().uploadModel(URI.create(WSC_01_TAXONOMY_URL), model, true);
+        registryManager.getKnowledgeBaseManager().uploadModel(URI.create(WSC_01_ONTOLOGY_NS), model, true);
     }
 
     private static void importWscServices(ServiceTransformationEngine transformationEngine,
