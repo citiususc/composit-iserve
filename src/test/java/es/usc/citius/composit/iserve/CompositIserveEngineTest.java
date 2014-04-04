@@ -7,9 +7,6 @@ import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.MapBinder;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import es.usc.citius.composit.core.composition.InputDiscoverer;
 import es.usc.citius.composit.core.composition.network.ServiceMatchNetwork;
 import es.usc.citius.composit.core.composition.optimization.BackwardMinimizationOptimizer;
@@ -22,7 +19,6 @@ import es.usc.citius.composit.iserve.match.iServeMatchGraph;
 import es.usc.citius.composit.iserve.match.iServeSetMatchFunction;
 import es.usc.citius.composit.iserve.util.WSCImportUtils;
 import es.usc.citius.composit.wsc08.data.WSCTest;
-import junit.framework.Assert;
 import org.jukito.JukitoModule;
 import org.jukito.JukitoRunner;
 import org.junit.BeforeClass;
@@ -33,16 +29,8 @@ import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.iserve.api.iServeEngine;
 import uk.ac.open.kmi.iserve.api.iServeEngineModule;
 import uk.ac.open.kmi.iserve.discovery.disco.LogicConceptMatchType;
-import uk.ac.open.kmi.iserve.sal.exception.SalException;
-import uk.ac.open.kmi.iserve.sal.manager.RegistryManager;
-import uk.ac.open.kmi.msm4j.Service;
-import uk.ac.open.kmi.msm4j.io.TransformationException;
-import uk.ac.open.kmi.msm4j.io.impl.ServiceTransformationEngine;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -120,61 +108,11 @@ public class CompositIserveEngineTest {
     @BeforeClass
     public static void oneOfSetup() throws Exception {
         Injector injector = Guice.createInjector(new iServeEngineModule());
-        RegistryManager registryManager = injector.getInstance(RegistryManager.class);
-        ServiceTransformationEngine transformationEngine = injector.getInstance(ServiceTransformationEngine
-                .class);
-
-        registryManager.clearRegistry();
-
-//        uploadWscTaxonomy(registryManager);
-//        importWscServices(transformationEngine, registryManager);
-
         iServeEngine iserve = injector.getInstance(iServeEngine.class);
 
         // Import data
         WSCImportUtils.importDataset(iserve, new URL(WSC_01_ONTOLOGY_URL), test, false);
     }
-
-    private static void uploadWscTaxonomy(RegistryManager registryManager) throws URISyntaxException {
-        // First load the ontology in the server to avoid issues
-        OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-        // Fetch the model
-        String taxonomyFile = CompositIserveEngineTest.class.getResource(WSC08_01_TAXONOMY_FILE).toURI().toASCIIString();
-        model.read(taxonomyFile);
-
-        // Upload the model first (it won't be automatically fetched as the URIs won't resolve so we do it manually)
-        registryManager.getKnowledgeBaseManager().uploadModel(URI.create(WSC_01_ONTOLOGY_NS), model, true);
-    }
-
-    private static void importWscServices(ServiceTransformationEngine transformationEngine,
-                                          RegistryManager registryManager)
-            throws TransformationException,
-            SalException, URISyntaxException, FileNotFoundException {
-
-        log.info("Importing WSC Dataset");
-        String file = CompositIserveEngineTest.class.getResource(WSC08_01_SERVICES).getFile();
-        log.info("Services XML file {}", file);
-        File services = new File(file);
-        URL base = CompositIserveEngineTest.class.getResource(WSC08_01);
-        log.info("Dataset Base URI {}", base.toURI().toASCIIString());
-
-        List<Service> result = transformationEngine.transform(services, base.toURI().toASCIIString(), MEDIATYPE);
-        //List<Service> result = Transformer.getInstance().transform(services, null, MEDIATYPE);
-        if (result.size() == 0) {
-            Assert.fail("No services transformed!");
-        }
-        // Import all services
-        int counter = 0;
-        for (Service s : result) {
-            URI uri = registryManager.getServiceManager().addService(s);
-            Assert.assertNotNull(uri);
-            log.info("Service added: " + uri.toASCIIString());
-            counter++;
-        }
-        log.debug("Total services added {}", counter);
-    }
-
-
 
     @Test
     public void testCompose(CompositIserveEngineFactory factory, Map<String, Provider<NetworkOptimizer<? extends URI, ? extends LogicConceptMatchType>>> optimisationsProviders) throws Exception {
