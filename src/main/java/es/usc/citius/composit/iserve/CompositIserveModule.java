@@ -35,20 +35,20 @@ public class CompositIserveModule extends AbstractModule {
         bind(OperationTranslator.class).to(iServeIndexedOperationTranslator.class);
 
         // bind the Input Discoverer
-        bind(new TypeLiteral<InputDiscoverer<? extends URI>>(){}).to(iServeOperationDiscovererAdapter.class);
+        bind(new TypeLiteral<InputDiscoverer<URI>>(){}).to(iServeOperationDiscovererAdapter.class);
 
         // bind setMatchFunction
-        bind(new TypeLiteral<SetMatchFunction<? extends URI, ? extends LogicConceptMatchType>>(){}).to(iServeSetMatchFunction.class);
+        bind(new TypeLiteral<SetMatchFunction<URI, ? extends LogicConceptMatchType>>(){}).to(iServeSetMatchFunction.class);
 
         // bind AbstractMatchGraph
-        bind(new TypeLiteral<AbstractMatchGraph<? extends URI, ? extends LogicConceptMatchType>>(){}).to(iServeMatchGraph.class);
+        bind(new TypeLiteral<AbstractMatchGraph<URI, ? extends LogicConceptMatchType>>(){}).to(iServeMatchGraph.class);
 
         // Bind optimisers
-        MapBinder<String, NetworkOptimizer<? extends URI, ? extends LogicConceptMatchType>> mapbinder =
+        MapBinder<String, NetworkOptimizer<URI, ? extends LogicConceptMatchType>> mapbinder =
                 MapBinder.newMapBinder(
                         binder(),
                         new TypeLiteral<String>(){},
-                        new TypeLiteral<NetworkOptimizer<? extends URI, ? extends LogicConceptMatchType>>() {});
+                        new TypeLiteral<NetworkOptimizer<URI, ? extends LogicConceptMatchType>>() {});
 
         // For now hard-code the optimisations bindings. Should have a plugin method later.
         mapbinder.addBinding(BackwardMinimizationOptimizer.class.getName()).
