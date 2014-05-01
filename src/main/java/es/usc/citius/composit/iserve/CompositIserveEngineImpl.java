@@ -9,7 +9,6 @@ import es.usc.citius.composit.core.composition.search.CompositionProblem;
 import es.usc.citius.composit.core.composition.search.DefaultCompositionProblem;
 import es.usc.citius.composit.core.matcher.graph.MatchGraph;
 import es.usc.citius.composit.core.model.impl.SignatureIO;
-import es.usc.citius.lab.hipster.algorithm.Algorithms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.open.kmi.iserve.api.iServeEngine;
@@ -67,9 +66,6 @@ public class CompositIserveEngineImpl implements CompositIserveEngine {
 
         log.info("Computing compositions based on signature:\n inputs {} \n outputs {}", inputs, outputs );
 
-        // Create match graph
-//        MatchGraph<URI, LogicConceptMatchType> matchGraph = createMatchGraph();
-
         CompositionProblem<URI, LogicConceptMatchType> problem =
                 new DefaultCompositionProblem<URI, LogicConceptMatchType>(matchGraph, this.inputDiscoverer);
 
@@ -83,17 +79,11 @@ public class CompositIserveEngineImpl implements CompositIserveEngine {
         SignatureIO<URI> request = new SignatureIO<URI>(inputs, outputs);
 
         Metrics.get().reset();
-        Algorithms.Search.Result searchResult = composit.search(request);
-        ServiceMatchNetwork<URI, LogicConceptMatchType> result = generateServiceMatchNetwork(searchResult);
+        ServiceMatchNetwork<URI, LogicConceptMatchType> result = composit.searchComposition(request);
         log.info("Metrics:\n " + Metrics.get().toString());
 
         return result;
-//        iserve.shutdown();
 
-    }
-
-    private ServiceMatchNetwork<URI, LogicConceptMatchType> generateServiceMatchNetwork(Algorithms.Search.Result searchResult) {
-        return null;
     }
 
 

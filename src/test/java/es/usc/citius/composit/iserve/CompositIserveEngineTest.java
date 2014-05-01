@@ -115,6 +115,8 @@ public class CompositIserveEngineTest {
     @Test
     public void testCompose(CompositIserveEngineFactory factory, Map<String, Provider<NetworkOptimizer<? extends URI, ? extends LogicConceptMatchType>>> optimisationsProviders) throws Exception {
 
+        //FIXME: No optimisers there!! (maybe not providers?)
+
         log.info("Testing composition...");
 
         ImmutableSet.Builder<URI> inputsBuilder = new ImmutableSet.Builder<URI>();
@@ -136,6 +138,7 @@ public class CompositIserveEngineTest {
         CompositIserveEngine compositionEngine = factory.create(optimizers, 0);
 
         ServiceMatchNetwork<URI, LogicConceptMatchType> result = compositionEngine.compose(inputsBuilder.build(), outputsBuilder.build());
+        log.info("Composition Result: \n {}", result.getLeveledList());
 
     }
 }

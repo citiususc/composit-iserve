@@ -51,20 +51,23 @@ public class WSCImportUtils {
         List<Service> services = new WSCTransformer().transform(servicesStream, ontoUrl, resolver);
         System.out.println("OK");
 
-        initJadlerListeningOn(ontoUrl.getPort());
-        onRequest()
-                .havingMethodEqualTo("GET")
-                .havingPathEqualTo(ontoUrl.getPath())
-                .respond()
-                .withBody(ontoOwl)
-                .withContentType("application/rdf+xml; charset=UTF-8");
+        try {
+            initJadlerListeningOn(ontoUrl.getPort());
+            onRequest()
+                    .havingMethodEqualTo("GET")
+                    .havingPathEqualTo(ontoUrl.getPath())
+                    .respond()
+                    .withBody(ontoOwl)
+                    .withContentType("application/rdf+xml; charset=UTF-8");
 
-        // Import services
-        Map<URI, Service> mapping = new HashMap<URI, Service>();
-        for (Service s : services) {
-            mapping.put(mgr.addService(s), s);
+            // Import services
+            Map<URI, Service> mapping = new HashMap<URI, Service>();
+            for (Service s : services) {
+                mapping.put(mgr.addService(s), s);
+            }
+            return mapping;
+        } finally {
+            closeJadler();
         }
-        closeJadler();
-        return mapping;
     }
 }
