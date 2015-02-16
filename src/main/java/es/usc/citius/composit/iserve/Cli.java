@@ -110,7 +110,6 @@ public class Cli {
         log.info("Local URL ontology: {}", ontoUrl);
         SignatureIO<URI> request = createRequest(this.requestInputs, this.requestOutputs, ontoUrl);
 
-        log.info("Request inputs: {}; Request outputs: {}", this.requestInputs, this.requestOutputs);
         // Run composition
         composition(request, ontoUrl);
 
@@ -143,12 +142,13 @@ public class Cli {
     }
 
     public void composition(SignatureIO<URI> request, URL ontoUrl) throws Exception {
+
         // Create a iServe engine
         // Import the dataset to iServe
         final iServeEngine iserve = iServeEngineFactory.createEngine();
 
         // Import data
-        log.info("Importing Dataset...");
+        log.info("Initialising Service Registry with the testing dataset ...");
         WSCImportUtils.importDataset(iserve, ontoUrl, test, false);
 
         log.info("iServe available concept matchers: {}", iserve.listAvailableMatchers());
@@ -167,7 +167,7 @@ public class Cli {
         final ServiceManager serviceManager = iserve.getRegistryManager().getServiceManager();
 
         final ConceptMatcher matcher = new ConceptMatcherMetrics(iserveMatcher);
-        log.info("Selected matcher description: " + matcher.getMatcherDescription());
+        log.info("Selected matcher: " + matcher.getMatcherDescription());
 
         final MatchGraph<URI, LogicConceptMatchType> matchGraph = new iServeMatchGraph(matcher,
                 iserve.getRegistryManager().getKnowledgeBaseManager(), matchCacheSize);
@@ -181,6 +181,8 @@ public class Cli {
         }
 
         final InputDiscoverer<URI> discoverer;
+
+        log.info("Configuring Discovery Component ...");
 
         switch(discoveryEngine){
             case DUMMY:
@@ -220,9 +222,17 @@ public class Cli {
 
         Metrics.get().reset();
 
+        log.info("Initialising Composition Engine");
+
         ComposIT<URI, LogicConceptMatchType> composit = new ComposIT<URI, LogicConceptMatchType>(problem);
         composit.addOptimization(new BackwardMinimizationOptimizer<URI, LogicConceptMatchType>());
         composit.addOptimization(new FunctionalDominanceOptimizer<URI, LogicConceptMatchType>());
+
+
+        log.info("Composition Problem Specification \n Requested Inputs: \n\t{} \n Requested Outputs: \n\t{}", request.getInputs(), request.getOutputs());
+        System.out.println("System initialised.");
+        System.out.println("Press enter when ready to trigger the composition");
+        System.in.read();
 
         for(int i=0; i < runtimes; i++){
             log.info("Running composition " + (i+1) + "/" + runtimes);
