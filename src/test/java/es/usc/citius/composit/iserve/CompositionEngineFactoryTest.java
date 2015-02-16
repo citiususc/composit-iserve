@@ -86,7 +86,10 @@ public class CompositionEngineFactoryTest {
         CompositIserveEngine compositionEngine = CompositionEngineFactory.createEngine();
 
         ServiceMatchNetwork<URI, LogicConceptMatchType> result = compositionEngine.compose(inputsBuilder.build(), outputsBuilder.build());
+        CompositionResult<URI, LogicConceptMatchType> composition = new CompositionResult<URI, LogicConceptMatchType>(result);
+
         log.info("Composition Result: {}", result.getLeveledList());
+        log.info("Composition Graph: {}", composition.getGraph());
     }
 
 }
